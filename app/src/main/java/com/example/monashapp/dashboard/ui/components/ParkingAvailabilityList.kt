@@ -11,8 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.monashapp.R
 import com.example.monashapp.core.model.dashboard.ParkingAvailability
 import com.example.monashapp.dashboard.ui.DashboardColors
 import com.example.monashapp.dashboard.ui.DashboardSpacing
@@ -28,8 +30,8 @@ fun ParkingAvailabilityList(parkingAvailability: List<ParkingAvailability>) {
         ) {
             Text(text = lot.zoneName, style = MaterialTheme.typography.titleMedium)
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                PermitBadge(label = "B", value = lot.bluePermitAvailable, color = DashboardColors.parkingBlue)
-                PermitBadge(label = "R", value = lot.redPermitAvailable, color = DashboardColors.parkingRed)
+                PermitBadge(label = stringResource(id = R.string.dashboard_permit_blue_label), value = lot.bluePermitAvailable, color = DashboardColors.parkingBlue)
+                PermitBadge(label = stringResource(id = R.string.dashboard_permit_red_label), value = lot.redPermitAvailable, color = DashboardColors.parkingRed)
             }
         }
     }

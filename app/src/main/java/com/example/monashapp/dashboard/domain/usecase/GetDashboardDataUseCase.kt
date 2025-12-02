@@ -9,4 +9,3 @@ class GetDashboardDataUseCase(
 ) {
     operator fun invoke(): Flow<DashboardData> = repository.observeDashboard()
 }
-

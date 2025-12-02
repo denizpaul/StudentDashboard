@@ -1,13 +1,22 @@
 package com.example.monashapp.dashboard.di
 
+import com.example.monashapp.dashboard.data.local.DashboardLocalDataSource
 import com.example.monashapp.dashboard.data.local.FakeDashboardLocalDataSource
 import com.example.monashapp.dashboard.data.repository.DashboardRepositoryImpl
+import com.example.monashapp.dashboard.domain.repository.DashboardRepository
 import com.example.monashapp.dashboard.domain.usecase.GetDashboardDataUseCase
 
 object DashboardGraph {
-    private val localDataSource by lazy { FakeDashboardLocalDataSource() }
-    private val repository by lazy { DashboardRepositoryImpl(localDataSource) }
+    private lateinit var localDataSource: DashboardLocalDataSource
+    private lateinit var repository: DashboardRepository
 
-    fun provideGetDashboardDataUseCase(): GetDashboardDataUseCase = GetDashboardDataUseCase(repository)
+    fun initialize() {
+        localDataSource = FakeDashboardLocalDataSource()
+        repository = DashboardRepositoryImpl(localDataSource)
+    }
+
+    fun provideGetDashboardDataUseCase(): GetDashboardDataUseCase {
+        check(::repository.isInitialized) { "DashboardGraph is not initialized" }
+        return GetDashboardDataUseCase(repository)
+    }
 }
-

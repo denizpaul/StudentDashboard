@@ -23,4 +23,3 @@ object DashboardColors {
     val parkingRed = Color(0xFFEA4335)
     val divider = Color(0x3379767E)
 }
-

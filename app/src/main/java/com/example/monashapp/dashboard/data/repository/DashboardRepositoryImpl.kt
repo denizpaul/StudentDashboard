@@ -13,4 +13,3 @@ class DashboardRepositoryImpl(
     override fun observeDashboard(): Flow<DashboardData> =
         localDataSource.observeDashboard().map { it.toDomain() }
 }
-

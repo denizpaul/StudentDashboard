@@ -18,14 +18,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.monashapp.R
 import com.example.monashapp.dashboard.presentation.DashboardUiState
 import com.example.monashapp.dashboard.presentation.DashboardUiEvent
 import com.example.monashapp.dashboard.ui.components.DashboardToolbar
 import com.example.monashapp.dashboard.ui.components.ParkingAvailabilityList
 import com.example.monashapp.dashboard.ui.components.TodaySessionCard
 import com.example.monashapp.dashboard.ui.components.UpcomingTasksCard
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.monashapp.ui.theme.MonashTheme
 
 @Composable
 fun DashboardScreen(
@@ -52,7 +56,11 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
         contentPadding = PaddingValues(bottom = DashboardSpacing.sectionSpacing)
     ) {
         item {
-            Text(text = state.dateLabel, style = MaterialTheme.typography.bodyLarge, color = Color(0xFF1D1B20))
+            Text(
+                text = state.dateLabel,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
         item {
             Card(
@@ -82,7 +90,11 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
             }
         }
         item {
-            Text(text = "Available parking spots", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold), color = Color(0xFF49454F))
+            Text(
+                text = stringResource(id = R.string.dashboard_parking_label),
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
         item {
             Card(
@@ -95,5 +107,13 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DashboardScreenPreview() {
+    MonashTheme {
+        DashboardScreen(uiState = previewDashboardState, onEvent = {})
     }
 }

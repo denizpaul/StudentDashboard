@@ -29,7 +29,7 @@ fun UpcomingTasksCard(label: String, tasks: List<UpcomingTask>) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
-            color = Color(0xFF1D1B20)
+            color = MaterialTheme.colorScheme.onSurface
         )
         tasks.forEach { task ->
             Row(
@@ -43,13 +43,18 @@ fun UpcomingTasksCard(label: String, tasks: List<UpcomingTask>) {
                         .clip(CircleShape)
                         .background(DashboardColors.taskBadge)
                 )
-                Column(modifier = Modifier.weight(1f)) {
+                Column {
                     Text(
                         text = task.dueTime,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
-                    Text(text = task.title, style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        text = task.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                     Text(
                         text = task.subtitle,
                         style = MaterialTheme.typography.bodyMedium,
@@ -61,8 +66,8 @@ fun UpcomingTasksCard(label: String, tasks: List<UpcomingTask>) {
     }
 }
 
+@Composable
 private fun statusColor(status: TaskStatus): Color = when (status) {
-    TaskStatus.NOT_SUBMITTED -> Color(0xFF49454F)
-    TaskStatus.SUBMITTED -> Color(0xFF49454F)
+    TaskStatus.NOT_SUBMITTED -> MaterialTheme.colorScheme.onSurfaceVariant
+    TaskStatus.SUBMITTED -> MaterialTheme.colorScheme.onSurfaceVariant
 }
-

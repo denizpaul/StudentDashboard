@@ -6,4 +6,3 @@ import kotlinx.coroutines.flow.Flow
 interface DashboardRepository {
     fun observeDashboard(): Flow<DashboardData>
 }
-
