@@ -9,9 +9,16 @@ import com.example.monashapp.core.model.dashboard.TodaySession
 import com.example.monashapp.core.model.dashboard.UpcomingTask
 import com.example.monashapp.dashboard.domain.repository.DashboardRepository
 import com.example.monashapp.dashboard.domain.usecase.GetDashboardDataUseCase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -47,14 +54,27 @@ private class FakeDashboardRepository : DashboardRepository {
     )
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class DashboardViewModelTest {
 
-    private val viewModel = DashboardViewModel(
-        getDashboardData = GetDashboardDataUseCase(FakeDashboardRepository())
-    )
+    private val testDispatcher = StandardTestDispatcher()
+    private lateinit var viewModel: DashboardViewModel
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+        viewModel = DashboardViewModel(
+            getDashboardData = GetDashboardDataUseCase(FakeDashboardRepository())
+        )
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
 
     @Test
-    fun `uiState emits dashboard data`() = runTest {
+    fun `uiState emits dashboard data`() = runTest(testDispatcher) {
         viewModel.uiState.test {
             val state = awaitItem()
             assertEquals("Hey, Kier", state.greeting)

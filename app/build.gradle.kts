@@ -1,21 +1,24 @@
+buildscript {
+    dependencies {
+        classpath("com.squareup:javapoet:1.13.0")
+    }
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt.android)
-    kotlin("kapt")
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
     namespace = "com.example.monashapp"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.monashapp"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -51,6 +54,12 @@ android {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        force("com.squareup:javapoet:1.13.0")
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -76,6 +85,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.25")
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)

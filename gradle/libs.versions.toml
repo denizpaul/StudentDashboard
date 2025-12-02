@@ -1,6 +1,6 @@
 [versions]
-agp = "8.13.1"
-kotlin = "2.0.21"
+agp = "8.5.0"
+kotlin = "1.9.25"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -12,11 +12,11 @@ activityCompose = "1.9.0"
 lifecycleRuntimeKtx = "2.8.3"
 lifecycleRuntimeCompose = "2.8.3"
 kotlinxCoroutines = "1.8.1"
-composeCompiler = "1.6.8"
-composeCompilerPlugin = "2.0.21"
+composeCompiler = "1.5.15"
+composeCompilerPlugin = "1.9.25"
 materialIconsExtended = "1.6.8"
 turbine = "1.1.0"
-hilt = "2.52"
+hilt = "2.46"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -50,3 +50,4 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "composeCompilerPlugin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+
