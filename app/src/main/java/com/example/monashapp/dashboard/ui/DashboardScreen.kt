@@ -38,6 +38,7 @@ import com.example.monashapp.core.model.dashboard.TaskStatus
 import com.example.monashapp.core.model.dashboard.TodaySession
 import com.example.monashapp.core.model.dashboard.UpcomingTask
 import com.example.monashapp.ui.theme.MonashTheme
+import com.example.monashapp.ui.theme.dashboardColors
 
 @Composable
 fun DashboardScreen(
@@ -56,6 +57,8 @@ fun DashboardScreen(
 
 @Composable
 private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modifier) {
+    val dashboardColors = MaterialTheme.dashboardColors
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -73,14 +76,19 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
         item {
             Card(
                 shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
             ) {
                 Column(modifier = Modifier.padding(DashboardSpacing.cardPadding), verticalArrangement = Arrangement.spacedBy(DashboardSpacing.itemSpacing)) {
                     state.todaySessions.forEachIndexed { index, session ->
                         TodaySessionCard(session)
                         if (index != state.todaySessions.lastIndex) {
-                            Spacer(modifier = Modifier.height(DashboardSpacing.dividerThickness).fillMaxWidth().background(DashboardColors.divider))
+                            Spacer(
+                                modifier = Modifier
+                                    .height(DashboardSpacing.dividerThickness)
+                                    .fillMaxWidth()
+                                    .background(dashboardColors.divider)
+                            )
                         }
                     }
                 }
@@ -89,7 +97,7 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
         item {
             Card(
                 shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
             ) {
                 Column(modifier = Modifier.padding(DashboardSpacing.cardPadding)) {
@@ -107,7 +115,7 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
         item {
             Card(
                 shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
             ) {
                 Column(modifier = Modifier.padding(DashboardSpacing.cardPadding)) {

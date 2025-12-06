@@ -25,12 +25,14 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.example.monashapp.core.model.dashboard.TaskStatus
 import com.example.monashapp.core.model.dashboard.UpcomingTask
-import com.example.monashapp.dashboard.ui.DashboardColors
 import com.example.monashapp.dashboard.ui.DashboardSpacing
 import com.example.monashapp.ui.theme.MonashTheme
+import com.example.monashapp.ui.theme.dashboardColors
 
 @Composable
 fun UpcomingTasksCard(label: String, tasks: List<UpcomingTask>) {
+    val dashboardColors = MaterialTheme.dashboardColors
+
     Column(verticalArrangement = Arrangement.spacedBy(DashboardSpacing.itemSpacing)) {
         Text(
             text = label,
@@ -47,7 +49,7 @@ fun UpcomingTasksCard(label: String, tasks: List<UpcomingTask>) {
                     modifier = Modifier
                         .size(32.dp)
                         .clip(CircleShape)
-                        .background(DashboardColors.taskBadge)
+                        .background(dashboardColors.taskBadge)
                 )
                 Column {
                     Text(

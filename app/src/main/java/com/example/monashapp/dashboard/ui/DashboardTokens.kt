@@ -1,9 +1,15 @@
 package com.example.monashapp.dashboard.ui
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * Dashboard Design Tokens
+ *
+ * Spacing values follow M3 principles (multiples of 4dp or 8dp)
+ * Colors are now accessed via MaterialTheme.dashboardColors extension
+ * which adapts to light/dark themes automatically
+ */
 object DashboardSpacing {
     val screenHorizontal: Dp = 24.dp
     val screenVertical: Dp = 32.dp
@@ -15,11 +21,26 @@ object DashboardSpacing {
     val dividerThickness: Dp = 1.dp
 }
 
-object DashboardColors {
-    val sessionClassIndicator = Color(0xFFF28B82)
-    val sessionAssignmentIndicator = Color(0xFFFDC071)
-    val taskBadge = Color(0xFF8E7CDE)
-    val parkingBlue = Color(0xFF4285F4)
-    val parkingRed = Color(0xFFEA4335)
-    val divider = Color(0x3379767E)
-}
+/**
+ * DEPRECATED: Use MaterialTheme.dashboardColors instead
+ *
+ * Dashboard colors are now theme-aware and can be accessed via:
+ * @sample
+ * val dashboardColors = MaterialTheme.dashboardColors
+ * Box(modifier = Modifier.background(dashboardColors.sessionClassIndicator))
+ *
+ * Available colors:
+ * - sessionClassIndicator
+ * - sessionAssignmentIndicator
+ * - taskBadge
+ * - parkingBlue
+ * - parkingRed
+ * - divider
+ */
+@Deprecated(
+    message = "Use MaterialTheme.dashboardColors instead for theme-aware colors",
+    replaceWith = ReplaceWith("MaterialTheme.dashboardColors", "com.example.monashapp.ui.theme.dashboardColors"),
+    level = DeprecationLevel.WARNING
+)
+object DashboardColors
+

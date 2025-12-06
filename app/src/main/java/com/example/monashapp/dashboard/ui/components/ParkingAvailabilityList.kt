@@ -21,12 +21,14 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.example.monashapp.R
 import com.example.monashapp.core.model.dashboard.ParkingAvailability
-import com.example.monashapp.dashboard.ui.DashboardColors
 import com.example.monashapp.dashboard.ui.DashboardSpacing
 import com.example.monashapp.ui.theme.MonashTheme
+import com.example.monashapp.ui.theme.dashboardColors
 
 @Composable
 fun ParkingAvailabilityList(parkingAvailability: List<ParkingAvailability>) {
+    val dashboardColors = MaterialTheme.dashboardColors
+
     parkingAvailability.forEach { lot ->
         Row(
             modifier = Modifier
@@ -34,10 +36,22 @@ fun ParkingAvailabilityList(parkingAvailability: List<ParkingAvailability>) {
                 .padding(vertical = DashboardSpacing.smallSpacing),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = lot.zoneName, style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = lot.zoneName,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                PermitBadge(label = stringResource(id = R.string.dashboard_permit_blue_label), value = lot.bluePermitAvailable, color = DashboardColors.parkingBlue)
-                PermitBadge(label = stringResource(id = R.string.dashboard_permit_red_label), value = lot.redPermitAvailable, color = DashboardColors.parkingRed)
+                PermitBadge(
+                    label = stringResource(id = R.string.dashboard_permit_blue_label),
+                    value = lot.bluePermitAvailable,
+                    color = dashboardColors.parkingBlue
+                )
+                PermitBadge(
+                    label = stringResource(id = R.string.dashboard_permit_red_label),
+                    value = lot.redPermitAvailable,
+                    color = dashboardColors.parkingRed
+                )
             }
         }
     }
@@ -48,12 +62,17 @@ private fun PermitBadge(label: String, value: Int, color: Color) {
     Row(horizontalArrangement = Arrangement.spacedBy(DashboardSpacing.smallSpacing)) {
         Text(
             text = label,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onPrimary, // White on colored background
+            style = MaterialTheme.typography.labelSmall,
             modifier = Modifier
                 .background(color, CircleShape)
                 .padding(horizontal = 8.dp, vertical = 4.dp)
         )
-        Text(text = value.toString(), fontWeight = FontWeight.Bold)
+        Text(
+            text = value.toString(),
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 

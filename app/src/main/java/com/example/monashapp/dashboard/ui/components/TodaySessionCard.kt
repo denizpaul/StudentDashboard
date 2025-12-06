@@ -27,12 +27,14 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.example.monashapp.core.model.dashboard.SessionCategory
 import com.example.monashapp.core.model.dashboard.TodaySession
-import com.example.monashapp.dashboard.ui.DashboardColors
 import com.example.monashapp.dashboard.ui.DashboardSpacing
 import com.example.monashapp.ui.theme.MonashTheme
+import com.example.monashapp.ui.theme.dashboardColors
 
 @Composable
 fun TodaySessionCard(session: TodaySession) {
+    val dashboardColors = MaterialTheme.dashboardColors
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(DashboardSpacing.itemSpacing)
@@ -43,7 +45,7 @@ fun TodaySessionCard(session: TodaySession) {
                     .width(12.dp)
                     .height(48.dp)
                     .clip(CircleShape)
-                    .background(DashboardColors.sessionClassIndicator.copy(alpha = 0.8f)),
+                    .background(dashboardColors.sessionClassIndicator.copy(alpha = 0.8f)),
                 verticalArrangement = Arrangement.Center
             ) {}
         } else {
@@ -55,7 +57,7 @@ fun TodaySessionCard(session: TodaySession) {
                     modifier = Modifier
                         .size(32.dp)
                         .clip(CircleShape)
-                        .background(DashboardColors.sessionAssignmentIndicator)
+                        .background(dashboardColors.sessionAssignmentIndicator)
                 )
             }
         }
@@ -64,14 +66,26 @@ fun TodaySessionCard(session: TodaySession) {
                 Text(
                     text = session.startTime,
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                    color = Color(0xFF1D1B20)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 session.endTime?.let {
-                    Text(text = "– $it", style = MaterialTheme.typography.labelSmall, color = Color(0xFF49454F))
+                    Text(
+                        text = "– $it",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
-            Text(text = session.title, style = MaterialTheme.typography.titleMedium, color = Color(0xFF1D1B20))
-            Text(text = session.subtitle, style = MaterialTheme.typography.bodyMedium, color = Color(0xFF49454F))
+            Text(
+                text = session.title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = session.subtitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
