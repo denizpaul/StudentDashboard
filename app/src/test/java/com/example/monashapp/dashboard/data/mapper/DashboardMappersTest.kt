@@ -10,7 +10,6 @@ import com.example.monashapp.dashboard.data.model.LocalParkingBadge
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import kotlin.test.assertNotNull
 
 class DashboardMappersTest {
 

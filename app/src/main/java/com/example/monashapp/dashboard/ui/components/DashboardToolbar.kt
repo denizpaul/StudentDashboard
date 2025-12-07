@@ -1,7 +1,6 @@
 package com.example.monashapp.dashboard.ui.components
 
 import android.content.res.Configuration
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
