@@ -1,8 +1,9 @@
 package com.example.monashapp.dashboard.ui.components
 
 import android.content.res.Configuration
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,26 +13,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.monashapp.R
 import com.example.monashapp.dashboard.ui.DashboardSpacing
 import com.example.monashapp.ui.theme.MonashTheme
 import com.example.monashapp.ui.theme.dashboardColors
 
-/**
- * Event icon types
- */
 sealed class EventIcon {
     data class DurationLine(val color: Color) : EventIcon()
-    data class TaskCircle(val color: Color) : EventIcon()
+    data class TaskCircle(
+        val color: Color,
+        @DrawableRes val iconRes: Int? = null
+    ) : EventIcon()
 }
 
 /**
@@ -79,13 +82,28 @@ fun EventCell(
                 )
             }
             is EventIcon.TaskCircle -> {
-                Spacer(
+                Box(
                     modifier = Modifier
                         .size(DashboardSpacing.indicatorCircle)
-                        .padding(top = 3.dp)
-                        .clip(CircleShape)
-                        .background(icon.color)
-                )
+                        .padding(top = 3.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Spacer(
+                        modifier = Modifier
+                            .size(DashboardSpacing.indicatorCircle)
+                            .clip(CircleShape)
+                            .background(icon.color)
+                    )
+
+                    icon.iconRes?.let { iconRes ->
+                        Icon(
+                            painter = painterResource(id = iconRes),
+                            contentDescription = null,
+                            modifier = Modifier.size(12.dp),
+                            tint = Color.White
+                        )
+                    }
+                }
             }
         }
 
@@ -147,15 +165,13 @@ fun EventCell(
 @Composable
 private fun EventCellClassPreview() {
     MonashTheme {
-        Surface {
-            val dashboardColors = MaterialTheme.dashboardColors
-            EventCell(
-                icon = EventIcon.DurationLine(dashboardColors.sessionClassIndicator),
-                time = EventTime.Range("10.30am", "1.30pm"),
-                title = "FIT2001: Tutorial",
-                subtitle = "S4, 13 College Walk, Clayton"
-            )
-        }
+        val dashboardColors = MaterialTheme.dashboardColors
+        EventCell(
+            icon = EventIcon.DurationLine(dashboardColors.sessionClassIndicator),
+            time = EventTime.Range("10.30am", "1.30pm"),
+            title = "FIT2001: Tutorial",
+            subtitle = "S4, 13 College Walk, Clayton"
+        )
     }
 }
 
@@ -167,16 +183,17 @@ private fun EventCellClassPreview() {
 @Composable
 private fun EventCellTaskPreview() {
     MonashTheme {
-        Surface {
-            val dashboardColors = MaterialTheme.dashboardColors
-            EventCell(
-                icon = EventIcon.TaskCircle(dashboardColors.taskBadge),
-                time = EventTime.Single("5pm"),
-                title = "FIT2050: In-class quizzes submission closes",
-                subtitle = "Not submitted",
-                subtitleColor = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        val dashboardColors = MaterialTheme.dashboardColors
+        EventCell(
+            icon = EventIcon.TaskCircle(
+                color = dashboardColors.taskBadge,
+                iconRes = R.drawable.ic_task
+            ),
+            time = EventTime.Single("5pm"),
+            title = "FIT2050: In-class quizzes submission closes",
+            subtitle = "Not submitted",
+            subtitleColor = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -188,16 +205,17 @@ private fun EventCellTaskPreview() {
 @Composable
 private fun EventCellAssignmentPreview() {
     MonashTheme {
-        Surface {
-            val dashboardColors = MaterialTheme.dashboardColors
-            EventCell(
-                icon = EventIcon.TaskCircle(dashboardColors.sessionAssignmentIndicator),
-                time = EventTime.Single("5pm"),
-                title = "MTK1000: Weekly quizzes",
-                subtitle = "Submitted",
-                subtitleColor = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        val dashboardColors = MaterialTheme.dashboardColors
+        EventCell(
+            icon = EventIcon.TaskCircle(
+                color = dashboardColors.sessionAssignmentIndicator,
+                iconRes = R.drawable.ic_task
+            ),
+            time = EventTime.Single("5pm"),
+            title = "MTK1000: Weekly quizzes",
+            subtitle = "Submitted",
+            subtitleColor = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -210,15 +228,13 @@ private fun EventCellAssignmentPreview() {
 @Composable
 private fun EventCellDarkPreview() {
     MonashTheme {
-        Surface {
-            val dashboardColors = MaterialTheme.dashboardColors
-            EventCell(
-                icon = EventIcon.DurationLine(dashboardColors.sessionClassIndicator),
-                time = EventTime.Range("10.30am", "1.30pm"),
-                title = "FIT2001: Tutorial",
-                subtitle = "S4, 13 College Walk, Clayton"
-            )
-        }
+        val dashboardColors = MaterialTheme.dashboardColors
+        EventCell(
+            icon = EventIcon.DurationLine(dashboardColors.sessionClassIndicator),
+            time = EventTime.Range("10.30am", "1.30pm"),
+            title = "FIT2001: Tutorial",
+            subtitle = "S4, 13 College Walk, Clayton"
+        )
     }
 }
 
@@ -231,15 +247,16 @@ private fun EventCellDarkPreview() {
 @Composable
 private fun EventCellLongTextPreview() {
     MonashTheme {
-        Surface {
-            val dashboardColors = MaterialTheme.dashboardColors
-            EventCell(
-                icon = EventIcon.TaskCircle(dashboardColors.taskBadge),
-                time = EventTime.Single("5pm"),
-                title = "FIT2050: In-class quizzes submission closes for all students",
-                subtitle = "Building 123, Very Long Street Name, Clayton Campus"
-            )
-        }
+        val dashboardColors = MaterialTheme.dashboardColors
+        EventCell(
+            icon = EventIcon.TaskCircle(
+                color = dashboardColors.taskBadge,
+                iconRes = R.drawable.ic_task
+            ),
+            time = EventTime.Single("5pm"),
+            title = "FIT2050: In-class quizzes submission closes for all students",
+            subtitle = "Building 123, Very Long Street Name, Clayton Campus"
+        )
     }
 }
 
@@ -252,15 +269,13 @@ private fun EventCellLongTextPreview() {
 @Composable
 private fun EventCellAccessibilityPreview() {
     MonashTheme {
-        Surface {
-            val dashboardColors = MaterialTheme.dashboardColors
-            EventCell(
-                icon = EventIcon.DurationLine(dashboardColors.sessionClassIndicator),
-                time = EventTime.Range("10.30am", "1.30pm"),
-                title = "FIT2001: Tutorial",
-                subtitle = "S4, 13 College Walk, Clayton"
-            )
-        }
+        val dashboardColors = MaterialTheme.dashboardColors
+        EventCell(
+            icon = EventIcon.DurationLine(dashboardColors.sessionClassIndicator),
+            time = EventTime.Range("10.30am", "1.30pm"),
+            title = "FIT2001: Tutorial",
+            subtitle = "S4, 13 College Walk, Clayton"
+        )
     }
 }
 

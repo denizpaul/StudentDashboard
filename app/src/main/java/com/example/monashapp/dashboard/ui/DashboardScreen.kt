@@ -79,9 +79,6 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
             when (section.headerType) {
                 HeaderType.DATE -> {
                     item {
-                        CardTile(title = section.header)
-                    }
-                    item {
                         Card(
                             shape = RoundedCornerShape(DashboardSpacing.cardCorner),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -91,6 +88,15 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
                                 modifier = Modifier.padding(DashboardSpacing.cardPadding),
                                 verticalArrangement = Arrangement.spacedBy(DashboardSpacing.itemSpacing)
                             ) {
+                                CardTile(title = section.header)
+
+                                Spacer(
+                                    modifier = Modifier
+                                        .height(DashboardSpacing.dividerThickness)
+                                        .fillMaxWidth()
+                                        .background(dashboardColors.divider)
+                                )
+
                                 section.items.forEachIndexed { index, item ->
                                     when (item) {
                                         is DashboardItem.Session -> {
@@ -172,7 +178,10 @@ private fun TaskItemCell(item: DashboardItem.Task) {
     }
 
     EventCell(
-        icon = EventIcon.TaskCircle(color),
+        icon = EventIcon.TaskCircle(
+            color = color,
+            iconRes = R.drawable.ic_task
+        ),
         time = EventTime.Single(item.time),
         title = item.title,
         subtitle = item.subtitle
