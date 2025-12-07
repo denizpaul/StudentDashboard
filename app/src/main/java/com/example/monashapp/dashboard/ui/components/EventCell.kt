@@ -70,38 +70,41 @@ fun EventCell(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top
     ) {
-        when (icon) {
-            is EventIcon.DurationLine -> {
-                Spacer(
-                    modifier = Modifier
-                        .width(DashboardSpacing.indicatorWidth)
-                        .height(DashboardSpacing.indicatorHeight)
-                        .padding(top = 4.dp)
-                        .clip(CircleShape)
-                        .background(icon.color)
-                )
-            }
-            is EventIcon.TaskCircle -> {
-                Box(
-                    modifier = Modifier
-                        .size(DashboardSpacing.indicatorCircle)
-                        .padding(top = 3.dp),
-                    contentAlignment = Alignment.Center
-                ) {
+        // Icon section - fixed width for consistent alignment
+        Box(
+            modifier = Modifier.width(DashboardSpacing.indicatorCircle),
+            contentAlignment = Alignment.Center
+        ) {
+            when (icon) {
+                is EventIcon.DurationLine -> {
                     Spacer(
                         modifier = Modifier
-                            .size(DashboardSpacing.indicatorCircle)
+                            .width(DashboardSpacing.indicatorWidth)
+                            .height(DashboardSpacing.indicatorHeight)
                             .clip(CircleShape)
                             .background(icon.color)
                     )
-
-                    icon.iconRes?.let { iconRes ->
-                        Icon(
-                            painter = painterResource(id = iconRes),
-                            contentDescription = null,
-                            modifier = Modifier.size(12.dp),
-                            tint = Color.White
+                }
+                is EventIcon.TaskCircle -> {
+                    Box(
+                        modifier = Modifier.size(DashboardSpacing.indicatorCircle),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Spacer(
+                            modifier = Modifier
+                                .size(DashboardSpacing.indicatorCircle)
+                                .clip(CircleShape)
+                                .background(icon.color)
                         )
+
+                        icon.iconRes?.let { iconRes ->
+                            Icon(
+                                painter = painterResource(id = iconRes),
+                                contentDescription = null,
+                                modifier = Modifier.size(12.dp),
+                                tint = Color.White
+                            )
+                        }
                     }
                 }
             }
@@ -109,35 +112,37 @@ fun EventCell(
 
         Spacer(modifier = Modifier.width(DashboardSpacing.indicatorGap))
 
-        Column(modifier = Modifier.weight(1f)) {
+        // Time section - fixed width for consistent alignment
+        Column(
+            modifier = Modifier.width(52.dp)
+        ) {
             when (time) {
                 is EventTime.Single -> {
                     Text(
                         text = time.time,
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
                 is EventTime.Range -> {
-                    Column {
-                        Text(
-                            text = time.startTime,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = "-${time.endTime}",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                    Text(
+                        text = time.startTime,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "-${time.endTime}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        Column(modifier = Modifier.weight(2.2f)) {
+        // Content section - takes remaining space
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleSmall,

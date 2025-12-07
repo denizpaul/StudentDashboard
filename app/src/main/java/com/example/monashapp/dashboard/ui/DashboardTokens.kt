@@ -24,7 +24,7 @@ object DashboardSpacing {
 
     // Item spacing within cards - Figma exact
     val itemSpacing: Dp = 24.dp // Figma: 24dp gap between items in card
-    val indicatorGap: Dp = 16.dp // Figma: 16dp gap between indicator and content
+    val indicatorGap: Dp = 8.dp // Figma: 16dp gap between indicator and content
     val smallSpacing: Dp = 8.dp // For minor adjustments
     val tinySpacing: Dp = 2.dp // Figma: 2dp gap between title and subtitle
 
