@@ -6,8 +6,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,17 +17,31 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.example.monashapp.ui.theme.MonashTheme
 
+/**
+ * Dashboard toolbar component with flexible title alignment.
+ *
+ * @param modifier Modifier to be applied to the toolbar
+ * @param title The text to display in the toolbar
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardToolbar(title: String) {
-    CenterAlignedTopAppBar(
+fun DashboardToolbar(
+    modifier: Modifier = Modifier,
+    title: String// Default to left-aligned (Figma design
+) {
+    TopAppBar(
         title = {
-            Text(text = title, style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Start
+            )
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Transparent,
-            titleContentColor = MaterialTheme.colorScheme.onSurface
-        )
+            titleContentColor = MaterialTheme.colorScheme.onBackground
+        ),
+        modifier = modifier
     )
 }
 
@@ -40,12 +56,12 @@ private class ToolbarTitleProvider : PreviewParameterProvider<String> {
 }
 
 @Preview(
-    name = "Toolbar - Light",
+    name = "Toolbar - Left Aligned (Default)",
     group = "DashboardToolbar",
     showBackground = true
 )
 @Preview(
-    name = "Toolbar - Dark",
+    name = "Toolbar - Left Aligned Dark",
     group = "DashboardToolbar",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     showBackground = true
@@ -62,8 +78,8 @@ private fun DashboardToolbarPreview(
 }
 
 @Preview(
-    name = "Toolbar - Long Text",
-    group = "DashboardToolbar",
+    name = "Toolbar - Long Text Left",
+    group = "DashboardToolbar - Alignment",
     showBackground = true,
     widthDp = 320
 )
@@ -71,10 +87,11 @@ private fun DashboardToolbarPreview(
 private fun DashboardToolbarLongTextPreview() {
     MonashTheme {
         Surface {
-            DashboardToolbar(title = "Hey, Christopher Alexander")
+            DashboardToolbar(title = "Hey, Christopher Alexander") // Default left-aligned
         }
     }
 }
+
 
 @Preview(
     name = "Toolbar - Accessibility (Large Font)",
