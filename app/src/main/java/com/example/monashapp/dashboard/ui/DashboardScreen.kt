@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,18 +27,17 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.example.monashapp.R
-import com.example.monashapp.core.model.dashboard.ParkingAvailability
-import com.example.monashapp.core.model.dashboard.SessionCategory
-import com.example.monashapp.core.model.dashboard.TaskStatus
-import com.example.monashapp.core.model.dashboard.TodaySession
-import com.example.monashapp.core.model.dashboard.UpcomingTask
+import com.example.monashapp.core.model.dashboard.DashboardItem
+import com.example.monashapp.core.model.dashboard.HeaderType
 import com.example.monashapp.dashboard.presentation.DashboardUiEvent
 import com.example.monashapp.dashboard.presentation.DashboardUiState
 import com.example.monashapp.dashboard.ui.components.CardTile
-import com.example.monashapp.dashboard.ui.components.ParkingAvailabilityList
+import com.example.monashapp.dashboard.ui.components.DataPoint
+import com.example.monashapp.dashboard.ui.components.EventCell
+import com.example.monashapp.dashboard.ui.components.EventIcon
+import com.example.monashapp.dashboard.ui.components.EventTime
 import com.example.monashapp.dashboard.ui.components.SectionTitle
-import com.example.monashapp.dashboard.ui.components.TodaySessionCard
-import com.example.monashapp.dashboard.ui.components.UpcomingTasksCard
+import com.example.monashapp.dashboard.ui.components.SmallCell
 import com.example.monashapp.ui.theme.MonashTheme
 import com.example.monashapp.ui.theme.dashboardColors
 
@@ -46,7 +46,6 @@ fun DashboardScreen(
     uiState: DashboardUiState,
     onEvent: (DashboardUiEvent) -> Unit
 ) {
-    // No Scaffold needed - Figma design shows greeting as part of content, not in a toolbar
     DashboardContent(
         state = uiState,
         modifier = Modifier.fillMaxSize()
@@ -58,276 +57,160 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
     val dashboardColors = MaterialTheme.dashboardColors
 
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = DashboardSpacing.screenHorizontal), // Figma: 24dp horizontal
-        verticalArrangement = Arrangement.spacedBy(DashboardSpacing.cardSpacing), // Figma: 16dp between cards
+        modifier = modifier,
         contentPadding = PaddingValues(
-            top = DashboardSpacing.screenTop, // Figma: 48dp from top
-            bottom = DashboardSpacing.screenBottom // Figma: 40dp from bottom
-        )
+            start = DashboardSpacing.screenHorizontal,
+            top = DashboardSpacing.screenTop,
+            end = DashboardSpacing.screenHorizontal,
+            bottom = DashboardSpacing.screenBottom
+        ),
+        verticalArrangement = Arrangement.spacedBy(DashboardSpacing.cardSpacing)
     ) {
-        // Greeting - Figma: Bold 28sp, -0.7 tracking, 42px line height (LEFT-ALIGNED)
         item {
             Text(
-                text = state.greeting, // "Hey, Kier" - shown in content, not toolbar
-                style = MaterialTheme.typography.headlineMedium, // Bold 28sp, 42px line, -0.7 tracking
-                color = MaterialTheme.colorScheme.onBackground, // Figma: #1D1B20
-                textAlign = TextAlign.Start // LEFT-ALIGNED per Figma design
+                text = state.greeting,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Start
             )
         }
-        // Today's sessions section - using CardTile for header
-        item {
-            CardTile(title = state.dateLabel) // e.g., "Today, 10 March"
-        }
-        item {
-            Card(
-                shape = RoundedCornerShape(DashboardSpacing.cardCorner), // Figma: 28dp radius
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(DashboardSpacing.cardPadding), // Figma: 20dp
-                    verticalArrangement = Arrangement.spacedBy(DashboardSpacing.itemSpacing) // Figma: 24dp
-                ) {
-                    state.todaySessions.forEachIndexed { index, session ->
-                        TodaySessionCard(session)
-                        if (index != state.todaySessions.lastIndex) {
-                            Spacer(
-                                modifier = Modifier
-                                    .height(DashboardSpacing.dividerThickness)
-                                    .fillMaxWidth()
-                                    .background(dashboardColors.divider) // Exact Figma color with transparency
-                            )
+
+        state.sections.forEach { section ->
+            when (section.headerType) {
+                HeaderType.DATE -> {
+                    item {
+                        CardTile(title = section.header)
+                    }
+                    item {
+                        Card(
+                            shape = RoundedCornerShape(DashboardSpacing.cardCorner),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(DashboardSpacing.cardPadding),
+                                verticalArrangement = Arrangement.spacedBy(DashboardSpacing.itemSpacing)
+                            ) {
+                                section.items.forEachIndexed { index, item ->
+                                    when (item) {
+                                        is DashboardItem.Session -> {
+                                            SessionItemCell(item = item)
+                                        }
+                                        is DashboardItem.Task -> {
+                                            TaskItemCell(item = item)
+                                        }
+                                        else -> {}
+                                    }
+                                    if (index != section.items.lastIndex) {
+                                        Spacer(
+                                            modifier = Modifier
+                                                .height(DashboardSpacing.dividerThickness)
+                                                .fillMaxWidth()
+                                                .background(dashboardColors.divider)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                HeaderType.SECTION -> {
+                    item {
+                        SectionTitle(
+                            title = section.header,
+                            showDivider = true
+                        )
+                    }
+                    item {
+                        Card(
+                            shape = RoundedCornerShape(DashboardSpacing.cardCorner),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(DashboardSpacing.cardPadding)) {
+                                section.items.forEach { item ->
+                                    when (item) {
+                                        is DashboardItem.Parking -> {
+                                            ParkingItemCell(item = item)
+                                        }
+                                        else -> {}
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-        item {
-            Card(
-                shape = RoundedCornerShape(DashboardSpacing.cardCorner), // Figma: 28dp radius
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-            ) {
-                Column(modifier = Modifier.padding(DashboardSpacing.cardPadding)) { // Figma: 20dp
-                    UpcomingTasksCard(label = state.upcomingLabel, tasks = state.upcomingTasks)
-                }
-            }
-        }
-        // Parking section - using SectionTitle with divider
-        item {
-            SectionTitle(
-                title = stringResource(id = R.string.dashboard_parking_label),
-                showDivider = true
-            )
-        }
-        item {
-            Card(
-                shape = RoundedCornerShape(DashboardSpacing.cardCorner), // Figma: 28dp radius
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-            ) {
-                Column(modifier = Modifier.padding(DashboardSpacing.cardPadding)) { // Figma: 20dp
-                    ParkingAvailabilityList(parkingAvailability = state.parkingAvailability)
-                }
-            }
-        }
     }
 }
 
-// Preview parameter provider for different dashboard states
-private class DashboardStateProvider : PreviewParameterProvider<DashboardUiState> {
-    override val values = sequenceOf(
-        // Typical state
-        previewDashboardState,
-        // Busy day - many sessions and tasks
-        DashboardUiState(
-            greeting = "Hey, Alex",
-            dateLabel = "Today, 15 March",
-            todaySessions = listOf(
-                TodaySession("1", "9am", "11am", "FIT3155: Lecture", "S4, Clayton", SessionCategory.CLASS),
-                TodaySession("2", "12pm", "2pm", "FIT2001: Tutorial", "Building 5", SessionCategory.CLASS),
-                TodaySession("3", "3pm", null, "MTK1000: Quiz", "Submitted", SessionCategory.ASSIGNMENT),
-                TodaySession("4", "5pm", "7pm", "FIT3077: Workshop", "Online", SessionCategory.CLASS)
-            ),
-            upcomingLabel = "Tomorrow",
-            upcomingTasks = listOf(
-                UpcomingTask("1", "11.59pm", "FIT3155: Assignment 3", "Not submitted", TaskStatus.NOT_SUBMITTED),
-                UpcomingTask("2", "5pm", "FIT2001: Quiz", "Not submitted", TaskStatus.NOT_SUBMITTED)
-            ),
-            parkingAvailability = listOf(
-                ParkingAvailability("1", "North", 0, 0),
-                ParkingAvailability("2", "South", 2, 1)
-            ),
-            isLoading = false
-        ),
-        // Light day - minimal content
-        DashboardUiState(
-            greeting = "Hey, Sam",
-            dateLabel = "Today, 16 March",
-            todaySessions = listOf(
-                TodaySession("1", "2pm", "4pm", "FIT2001: Tutorial", "Clayton", SessionCategory.CLASS)
-            ),
-            upcomingLabel = "Sun, 17 March",
-            upcomingTasks = emptyList(),
-            parkingAvailability = listOf(
-                ParkingAvailability("1", "Campus Center", 45, 23)
-            ),
-            isLoading = false
+@Composable
+private fun SessionItemCell(item: DashboardItem.Session) {
+    val color = try {
+        val androidColor = android.graphics.Color.parseColor(item.iconColor)
+        Color(androidColor)
+    } catch (e: Exception) {
+        MaterialTheme.dashboardColors.sessionClassIndicator
+    }
+
+    EventCell(
+        icon = EventIcon.DurationLine(color),
+        time = EventTime.Range(item.startTime, item.endTime),
+        title = item.title,
+        subtitle = item.subtitle
+    )
+}
+
+@Composable
+private fun TaskItemCell(item: DashboardItem.Task) {
+    val color = try {
+        val androidColor = android.graphics.Color.parseColor(item.iconColor)
+        Color(androidColor)
+    } catch (e: Exception) {
+        MaterialTheme.dashboardColors.taskBadge
+    }
+
+    EventCell(
+        icon = EventIcon.TaskCircle(color),
+        time = EventTime.Single(item.time),
+        title = item.title,
+        subtitle = item.subtitle
+    )
+}
+
+@Composable
+private fun ParkingItemCell(item: DashboardItem.Parking) {
+    val dataPoints = item.badges.map { badge ->
+        val color = try {
+            val androidColor = android.graphics.Color.parseColor(badge.color)
+            Color(androidColor)
+        } catch (e: Exception) {
+            MaterialTheme.colorScheme.primary
+        }
+        DataPoint(
+            label = badge.label,
+            value = badge.value,
+            color = color
         )
+    }
+
+    SmallCell(
+        title = item.title,
+        dataPoints = dataPoints
     )
 }
 
 @Preview(
     name = "Dashboard - Light",
-    group = "DashboardScreen",
-    showBackground = true,
-    device = "id:pixel_5"
-)
-@Preview(
-    name = "Dashboard - Dark",
-    group = "DashboardScreen",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true,
-    device = "id:pixel_5"
+    showBackground = true
 )
 @Composable
-private fun DashboardScreenPreview(
-    @PreviewParameter(DashboardStateProvider::class, limit = 1) state: DashboardUiState
-) {
-    MonashTheme {
-        DashboardScreen(uiState = state, onEvent = {})
-    }
-}
-
-@Preview(
-    name = "Dashboard - Typical Day",
-    group = "DashboardScreen - States",
-    showBackground = true,
-    device = "id:pixel_5"
-)
-@Composable
-private fun DashboardScreenTypicalPreview() {
-    MonashTheme {
-        DashboardScreen(uiState = previewDashboardState, onEvent = {})
-    }
-}
-
-@Preview(
-    name = "Dashboard - Busy Day",
-    group = "DashboardScreen - States",
-    showBackground = true,
-    device = "id:pixel_5"
-)
-@Composable
-private fun DashboardScreenBusyPreview() {
+private fun DashboardScreenPreview() {
     MonashTheme {
         DashboardScreen(
-            uiState = DashboardUiState(
-                greeting = "Hey, Alex",
-                dateLabel = "Today, 15 March",
-                todaySessions = listOf(
-                    TodaySession("1", "9am", "11am", "FIT3155: Lecture", "S4, Clayton", SessionCategory.CLASS),
-                    TodaySession("2", "12pm", "2pm", "FIT2001: Tutorial", "Building 5", SessionCategory.CLASS),
-                    TodaySession("3", "3pm", null, "MTK1000: Quiz", "Submitted", SessionCategory.ASSIGNMENT),
-                    TodaySession("4", "5pm", "7pm", "FIT3077: Workshop", "Online", SessionCategory.CLASS)
-                ),
-                upcomingLabel = "Tomorrow",
-                upcomingTasks = listOf(
-                    UpcomingTask("1", "11.59pm", "FIT3155: Assignment 3", "Not submitted", TaskStatus.NOT_SUBMITTED),
-                    UpcomingTask("2", "5pm", "FIT2001: Quiz", "Not submitted", TaskStatus.NOT_SUBMITTED)
-                ),
-                parkingAvailability = listOf(
-                    ParkingAvailability("1", "North", 0, 0),
-                    ParkingAvailability("2", "South", 2, 1)
-                ),
-                isLoading = false
-            ),
+            uiState = DashboardUiState(greeting = "Hey, Kier", sections = emptyList()),
             onEvent = {}
         )
-    }
-}
-
-@Preview(
-    name = "Dashboard - Light Day",
-    group = "DashboardScreen - States",
-    showBackground = true,
-    device = "id:pixel_5"
-)
-@Composable
-private fun DashboardScreenLightDayPreview() {
-    MonashTheme {
-        DashboardScreen(
-            uiState = DashboardUiState(
-                greeting = "Hey, Sam",
-                dateLabel = "Today, 16 March",
-                todaySessions = listOf(
-                    TodaySession("1", "2pm", "4pm", "FIT2001: Tutorial", "Clayton", SessionCategory.CLASS)
-                ),
-                upcomingLabel = "Sun, 17 March",
-                upcomingTasks = emptyList(),
-                parkingAvailability = listOf(
-                    ParkingAvailability("1", "Campus Center", 45, 23)
-                ),
-                isLoading = false
-            ),
-            onEvent = {}
-        )
-    }
-}
-
-@Preview(
-    name = "Dashboard - Small Screen",
-    group = "DashboardScreen - Screen Sizes",
-    showBackground = true,
-    widthDp = 320,
-    heightDp = 640
-)
-@Composable
-private fun DashboardScreenSmallPreview() {
-    MonashTheme {
-        DashboardScreen(uiState = previewDashboardState, onEvent = {})
-    }
-}
-
-@Preview(
-    name = "Dashboard - Tablet",
-    group = "DashboardScreen - Screen Sizes",
-    showBackground = true,
-    device = "spec:width=800dp,height=1280dp,dpi=240"
-)
-@Composable
-private fun DashboardScreenTabletPreview() {
-    MonashTheme {
-        DashboardScreen(uiState = previewDashboardState, onEvent = {})
-    }
-}
-
-@Preview(
-    name = "Dashboard - Accessibility (Large Font)",
-    group = "DashboardScreen",
-    showBackground = true,
-    fontScale = 1.5f,
-    device = "id:pixel_5"
-)
-@Composable
-private fun DashboardScreenAccessibilityPreview() {
-    MonashTheme {
-        DashboardScreen(uiState = previewDashboardState, onEvent = {})
-    }
-}
-
-@Preview(
-    name = "Dashboard - Landscape",
-    group = "DashboardScreen - Orientations",
-    showBackground = true,
-    widthDp = 640,
-    heightDp = 360
-)
-@Composable
-private fun DashboardScreenLandscapePreview() {
-    MonashTheme {
-        DashboardScreen(uiState = previewDashboardState, onEvent = {})
     }
 }

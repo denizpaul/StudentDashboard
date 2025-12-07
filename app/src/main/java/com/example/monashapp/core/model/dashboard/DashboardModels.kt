@@ -5,43 +5,58 @@ package com.example.monashapp.core.model.dashboard
  */
 data class DashboardData(
     val greeting: String,
-    val dateLabel: String,
-    val todaySessions: List<TodaySession>,
-    val upcomingLabel: String,
-    val upcomingTasks: List<UpcomingTask>,
-    val parkingAvailability: List<ParkingAvailability>
+    val sections: List<DashboardSection>
 )
 
-data class TodaySession(
-    val id: String,
-    val startTime: String,
-    val endTime: String?,
-    val title: String,
-    val subtitle: String,
-    val category: SessionCategory
+data class DashboardSection(
+    val header: String,
+    val headerType: HeaderType,
+    val date: String? = null,
+    val items: List<DashboardItem>
 )
 
-data class UpcomingTask(
-    val id: String,
-    val dueTime: String,
-    val title: String,
-    val subtitle: String,
-    val status: TaskStatus
+sealed class DashboardItem {
+    data class Session(
+        val id: String,
+        val iconColor: String,
+        val startTime: String,
+        val endTime: String,
+        val startDateTime: String,
+        val endDateTime: String,
+        val title: String,
+        val subtitle: String
+    ) : DashboardItem()
+
+    data class Task(
+        val id: String,
+        val iconColor: String,
+        val time: String,
+        val dateTime: String,
+        val title: String,
+        val subtitle: String,
+        val status: TaskStatus
+    ) : DashboardItem()
+
+    data class Parking(
+        val id: String,
+        val title: String,
+        val badges: List<ParkingBadge>,
+        val lastUpdated: String
+    ) : DashboardItem()
+}
+
+data class ParkingBadge(
+    val label: String,
+    val value: Int,
+    val color: String
 )
 
-data class ParkingAvailability(
-    val id: String,
-    val zoneName: String,
-    val bluePermitAvailable: Int,
-    val redPermitAvailable: Int
-)
-
-enum class SessionCategory {
-    CLASS,
-    ASSIGNMENT
+enum class HeaderType {
+    DATE,
+    SECTION
 }
 
 enum class TaskStatus {
-    NOT_SUBMITTED,
-    SUBMITTED
+    SUBMITTED,
+    PENDING
 }

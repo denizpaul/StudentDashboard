@@ -22,7 +22,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.monashapp.core.model.dashboard.TaskStatus
 import com.example.monashapp.dashboard.ui.DashboardSpacing
 import com.example.monashapp.ui.theme.MonashTheme
 import com.example.monashapp.ui.theme.dashboardColors
@@ -66,83 +65,74 @@ fun EventCell(
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(DashboardSpacing.indicatorGap) // Figma: 16dp gap
+        verticalAlignment = Alignment.Top
     ) {
-        // Icon Column
         when (icon) {
             is EventIcon.DurationLine -> {
-                // Vertical line for class/duration events
-                Column(
+                Spacer(
                     modifier = Modifier
-                        .width(DashboardSpacing.indicatorWidth) // Figma: 6dp
-                        .height(DashboardSpacing.indicatorHeight) // Figma: 48dp
-                        .padding(top = 4.dp) // Align with text baseline
+                        .width(DashboardSpacing.indicatorWidth)
+                        .height(DashboardSpacing.indicatorHeight)
+                        .padding(top = 4.dp)
                         .clip(CircleShape)
-                        .background(icon.color),
-                    verticalArrangement = Arrangement.Center
-                ) {}
+                        .background(icon.color)
+                )
             }
             is EventIcon.TaskCircle -> {
-                // Circular icon for tasks/assignments
-                Column(
+                Spacer(
                     modifier = Modifier
-                        .width(DashboardSpacing.indicatorCircle) // Figma: 32dp
-                        .padding(top = 4.dp), // Align with text baseline
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(
-                        modifier = Modifier
-                            .size(DashboardSpacing.indicatorCircle) // Figma: 32dp
-                            .clip(CircleShape)
-                            .background(icon.color)
-                    )
-                }
+                        .size(DashboardSpacing.indicatorCircle)
+                        .padding(top = 3.dp)
+                        .clip(CircleShape)
+                        .background(icon.color)
+                )
             }
         }
 
-        // Content Column
+        Spacer(modifier = Modifier.width(DashboardSpacing.indicatorGap))
+
         Column(modifier = Modifier.weight(1f)) {
-            // Time display
             when (time) {
                 is EventTime.Single -> {
                     Text(
                         text = time.time,
-                        style = MaterialTheme.typography.bodyLarge, // Bold 16sp, 24px line
-                        color = MaterialTheme.colorScheme.onSurface // Figma: #1D1B20
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
                 is EventTime.Range -> {
-                    Row(horizontalArrangement = Arrangement.spacedBy(DashboardSpacing.smallSpacing)) {
+                    Column {
                         Text(
                             text = time.startTime,
-                            style = MaterialTheme.typography.bodyLarge, // Bold 16sp, 24px line
-                            color = MaterialTheme.colorScheme.onSurface // Figma: #1D1B20
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "– ${time.endTime}",
-                            style = MaterialTheme.typography.bodySmall, // Medium 12sp, 16px line
-                            color = MaterialTheme.colorScheme.onSurfaceVariant // Figma: #49454F
+                            text = "-${time.endTime}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
             }
+        }
 
-            // Title
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Column(modifier = Modifier.weight(2.2f)) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium, // Medium 16sp, 24px line
-                color = MaterialTheme.colorScheme.onSurface // Figma: #1D1B20
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
-            // Subtitle (optional)
             subtitle?.let {
-                Column(modifier = Modifier.padding(top = DashboardSpacing.tinySpacing)) { // 2dp padding
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodyMedium, // Regular 14sp, 20px line
-                        color = subtitleColor
-                    )
-                }
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = subtitleColor,
+                    modifier = Modifier.padding(top = DashboardSpacing.tinySpacing)
+                )
             }
         }
     }

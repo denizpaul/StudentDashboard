@@ -1,11 +1,9 @@
 package com.example.monashapp.dashboard.data.local
 
+import com.example.monashapp.dashboard.data.model.LocalDashboardItem
 import com.example.monashapp.dashboard.data.model.LocalDashboardPayload
-import com.example.monashapp.dashboard.data.model.ParkingLotEntity
-import com.example.monashapp.dashboard.data.model.SessionCategoryEntity
-import com.example.monashapp.dashboard.data.model.TaskEntity
-import com.example.monashapp.dashboard.data.model.TaskStatusEntity
-import com.example.monashapp.dashboard.data.model.TodaySessionEntity
+import com.example.monashapp.dashboard.data.model.LocalDashboardSection
+import com.example.monashapp.dashboard.data.model.LocalParkingBadge
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,38 +15,73 @@ class FakeDashboardLocalDataSource : DashboardLocalDataSource {
 
     private fun createPayload(): LocalDashboardPayload = LocalDashboardPayload(
         greeting = "Hey, Kier",
-        dateLabel = "Today, 10 March",
-        todaySessions = listOf(
-            TodaySessionEntity(
-                id = "session_1",
-                startTime = "10.30am",
-                endTime = "1.30pm",
-                title = "FIT2001: Tutorial",
-                subtitle = "S4, 13 College Walk, Clayton",
-                category = SessionCategoryEntity.CLASS
+        sections = listOf(
+            LocalDashboardSection(
+                header = "Today, 10 March",
+                headerType = "date",
+                date = "2024-03-10",
+                items = listOf(
+                    LocalDashboardItem.LocalSession(
+                        id = "evt_001",
+                        iconColor = "#FF6B9D",
+                        startTime = "10.30am",
+                        endTime = "1.30pm",
+                        startDateTime = "2024-03-10T10:30:00Z",
+                        endDateTime = "2024-03-10T13:30:00Z",
+                        title = "FIT2001: Tutorial",
+                        subtitle = "S4, 13 College Walk, Clayton"
+                    ),
+                    LocalDashboardItem.LocalTask(
+                        id = "task_001",
+                        iconColor = "#FFB86C",
+                        time = "5pm",
+                        dateTime = "2024-03-10T17:00:00Z",
+                        title = "MTK1000: Weekly quizzes",
+                        subtitle = "Submitted",
+                        status = "submitted"
+                    )
+                )
             ),
-            TodaySessionEntity(
-                id = "session_2",
-                startTime = "5pm",
-                endTime = null,
-                title = "MTK1000: Weekly quizzes",
-                subtitle = "Submitted",
-                category = SessionCategoryEntity.ASSIGNMENT
+            LocalDashboardSection(
+                header = "Sun, 12 March",
+                headerType = "date",
+                date = "2024-03-12",
+                items = listOf(
+                    LocalDashboardItem.LocalTask(
+                        id = "task_002",
+                        iconColor = "#BD93F9",
+                        time = "5pm",
+                        dateTime = "2024-03-12T17:00:00Z",
+                        title = "FIT2050: In-class quizzes submission closes",
+                        subtitle = "Not submitted",
+                        status = "pending"
+                    )
+                )
+            ),
+            LocalDashboardSection(
+                header = "Available parking spots",
+                headerType = "section",
+                items = listOf(
+                    LocalDashboardItem.LocalParking(
+                        id = "parking_001",
+                        title = "North (multi-level)",
+                        badges = listOf(
+                            LocalParkingBadge(label = "B", value = 12, color = "#5B9EFF"),
+                            LocalParkingBadge(label = "R", value = 5, color = "#FF5757")
+                        ),
+                        lastUpdated = "2024-03-10T09:45:00Z"
+                    ),
+                    LocalDashboardItem.LocalParking(
+                        id = "parking_002",
+                        title = "West 1",
+                        badges = listOf(
+                            LocalParkingBadge(label = "B", value = 0, color = "#5B9EFF"),
+                            LocalParkingBadge(label = "R", value = 2, color = "#FF5757")
+                        ),
+                        lastUpdated = "2024-03-10T09:45:00Z"
+                    )
+                )
             )
-        ),
-        upcomingLabel = "Sun, 12 March",
-        upcomingTasks = listOf(
-            TaskEntity(
-                id = "task_1",
-                dueTime = "5pm",
-                title = "FIT2050: In-class quizzes submission closes",
-                subtitle = "Not submitted",
-                status = TaskStatusEntity.NOT_SUBMITTED
-            )
-        ),
-        parkingLots = listOf(
-            ParkingLotEntity(id = "parking_1", zoneName = "North (multi-level)", bluePermit = 12, redPermit = 5),
-            ParkingLotEntity(id = "parking_2", zoneName = "West 1", bluePermit = 0, redPermit = 2)
         )
     )
 }

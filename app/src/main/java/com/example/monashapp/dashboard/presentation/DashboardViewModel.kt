@@ -32,15 +32,7 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             getDashboardData()
                 .collect { data ->
-                    _uiState.value = DashboardUiState(
-                        greeting = data.greeting,
-                        dateLabel = data.dateLabel,
-                        todaySessions = data.todaySessions,
-                        upcomingLabel = data.upcomingLabel,
-                        upcomingTasks = data.upcomingTasks,
-                        parkingAvailability = data.parkingAvailability,
-                        isLoading = false
-                    )
+                    _uiState.value = data.toUiState()
                 }
         }
     }

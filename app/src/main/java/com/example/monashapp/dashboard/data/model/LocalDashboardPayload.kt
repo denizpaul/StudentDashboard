@@ -1,48 +1,49 @@
 package com.example.monashapp.dashboard.data.model
 
-import com.example.monashapp.dashboard.data.model.ParkingLotEntity
-import com.example.monashapp.dashboard.data.model.TaskEntity
-import com.example.monashapp.dashboard.data.model.TodaySessionEntity
-
 data class LocalDashboardPayload(
     val greeting: String,
-    val dateLabel: String,
-    val todaySessions: List<TodaySessionEntity>,
-    val upcomingLabel: String,
-    val upcomingTasks: List<TaskEntity>,
-    val parkingLots: List<ParkingLotEntity>
+    val sections: List<LocalDashboardSection>
 )
 
-data class TodaySessionEntity(
-    val id: String,
-    val startTime: String,
-    val endTime: String?,
-    val title: String,
-    val subtitle: String,
-    val category: SessionCategoryEntity
+data class LocalDashboardSection(
+    val header: String,
+    val headerType: String,
+    val date: String? = null,
+    val items: List<LocalDashboardItem>
 )
 
-data class TaskEntity(
-    val id: String,
-    val dueTime: String,
-    val title: String,
-    val subtitle: String,
-    val status: TaskStatusEntity
-)
+sealed class LocalDashboardItem {
+    data class LocalSession(
+        val id: String,
+        val iconColor: String,
+        val startTime: String,
+        val endTime: String,
+        val startDateTime: String,
+        val endDateTime: String,
+        val title: String,
+        val subtitle: String
+    ) : LocalDashboardItem()
 
-data class ParkingLotEntity(
-    val id: String,
-    val zoneName: String,
-    val bluePermit: Int,
-    val redPermit: Int
-)
+    data class LocalTask(
+        val id: String,
+        val iconColor: String,
+        val time: String,
+        val dateTime: String,
+        val title: String,
+        val subtitle: String,
+        val status: String
+    ) : LocalDashboardItem()
 
-enum class SessionCategoryEntity {
-    CLASS,
-    ASSIGNMENT
+    data class LocalParking(
+        val id: String,
+        val title: String,
+        val badges: List<LocalParkingBadge>,
+        val lastUpdated: String
+    ) : LocalDashboardItem()
 }
 
-enum class TaskStatusEntity {
-    NOT_SUBMITTED,
-    SUBMITTED
-}
+data class LocalParkingBadge(
+    val label: String,
+    val value: Int,
+    val color: String
+)

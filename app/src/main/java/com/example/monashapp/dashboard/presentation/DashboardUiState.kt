@@ -1,15 +1,16 @@
 package com.example.monashapp.dashboard.presentation
 
-import com.example.monashapp.core.model.dashboard.ParkingAvailability
-import com.example.monashapp.core.model.dashboard.TodaySession
-import com.example.monashapp.core.model.dashboard.UpcomingTask
+import com.example.monashapp.core.model.dashboard.DashboardData
+import com.example.monashapp.core.model.dashboard.DashboardSection
 
 data class DashboardUiState(
     val greeting: String = "",
-    val dateLabel: String = "",
-    val todaySessions: List<TodaySession> = emptyList(),
-    val upcomingLabel: String = "",
-    val upcomingTasks: List<UpcomingTask> = emptyList(),
-    val parkingAvailability: List<ParkingAvailability> = emptyList(),
-    val isLoading: Boolean = true
+    val sections: List<DashboardSection> = emptyList(),
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
+)
+
+fun DashboardData.toUiState(): DashboardUiState = DashboardUiState(
+    greeting = greeting,
+    sections = sections
 )

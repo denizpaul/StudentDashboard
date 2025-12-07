@@ -1,57 +1,66 @@
 package com.example.monashapp.dashboard.data.mapper
 
 import com.example.monashapp.core.model.dashboard.DashboardData
-import com.example.monashapp.core.model.dashboard.ParkingAvailability
-import com.example.monashapp.core.model.dashboard.SessionCategory
+import com.example.monashapp.core.model.dashboard.DashboardItem
+import com.example.monashapp.core.model.dashboard.DashboardSection
+import com.example.monashapp.core.model.dashboard.HeaderType
+import com.example.monashapp.core.model.dashboard.ParkingBadge
 import com.example.monashapp.core.model.dashboard.TaskStatus
-import com.example.monashapp.core.model.dashboard.TodaySession
-import com.example.monashapp.core.model.dashboard.UpcomingTask
+import com.example.monashapp.dashboard.data.model.LocalDashboardItem
 import com.example.monashapp.dashboard.data.model.LocalDashboardPayload
-import com.example.monashapp.dashboard.data.model.ParkingLotEntity
-import com.example.monashapp.dashboard.data.model.SessionCategoryEntity
-import com.example.monashapp.dashboard.data.model.TaskEntity
-import com.example.monashapp.dashboard.data.model.TaskStatusEntity
-import com.example.monashapp.dashboard.data.model.TodaySessionEntity
+import com.example.monashapp.dashboard.data.model.LocalDashboardSection
+import com.example.monashapp.dashboard.data.model.LocalParkingBadge
 
 fun LocalDashboardPayload.toDomain(): DashboardData = DashboardData(
     greeting = greeting,
-    dateLabel = dateLabel,
-    todaySessions = todaySessions.map(TodaySessionEntity::toDomain),
-    upcomingLabel = upcomingLabel,
-    upcomingTasks = upcomingTasks.map(TaskEntity::toDomain),
-    parkingAvailability = parkingLots.map(ParkingLotEntity::toDomain)
+    sections = sections.map { it.toDomain() }
 )
 
-private fun TodaySessionEntity.toDomain(): TodaySession = TodaySession(
-    id = id,
-    startTime = startTime,
-    endTime = endTime,
-    title = title,
-    subtitle = subtitle,
-    category = category.toDomain()
+fun LocalDashboardSection.toDomain(): DashboardSection = DashboardSection(
+    header = header,
+    headerType = when (headerType.lowercase()) {
+        "date" -> HeaderType.DATE
+        "section" -> HeaderType.SECTION
+        else -> HeaderType.SECTION
+    },
+    date = date,
+    items = items.map { it.toDomain() }
 )
 
-private fun TaskEntity.toDomain(): UpcomingTask = UpcomingTask(
-    id = id,
-    dueTime = dueTime,
-    title = title,
-    subtitle = subtitle,
-    status = status.toDomain()
-)
-
-private fun ParkingLotEntity.toDomain(): ParkingAvailability = ParkingAvailability(
-    id = id,
-    zoneName = zoneName,
-    bluePermitAvailable = bluePermit,
-    redPermitAvailable = redPermit
-)
-
-private fun SessionCategoryEntity.toDomain(): SessionCategory = when (this) {
-    SessionCategoryEntity.CLASS -> SessionCategory.CLASS
-    SessionCategoryEntity.ASSIGNMENT -> SessionCategory.ASSIGNMENT
+fun LocalDashboardItem.toDomain(): DashboardItem = when (this) {
+    is LocalDashboardItem.LocalSession -> DashboardItem.Session(
+        id = id,
+        iconColor = iconColor,
+        startTime = startTime,
+        endTime = endTime,
+        startDateTime = startDateTime,
+        endDateTime = endDateTime,
+        title = title,
+        subtitle = subtitle
+    )
+    is LocalDashboardItem.LocalTask -> DashboardItem.Task(
+        id = id,
+        iconColor = iconColor,
+        time = time,
+        dateTime = dateTime,
+        title = title,
+        subtitle = subtitle,
+        status = when (status.lowercase()) {
+            "submitted" -> TaskStatus.SUBMITTED
+            "pending" -> TaskStatus.PENDING
+            else -> TaskStatus.PENDING
+        }
+    )
+    is LocalDashboardItem.LocalParking -> DashboardItem.Parking(
+        id = id,
+        title = title,
+        badges = badges.map { it.toDomain() },
+        lastUpdated = lastUpdated
+    )
 }
 
-private fun TaskStatusEntity.toDomain(): TaskStatus = when (this) {
-    TaskStatusEntity.NOT_SUBMITTED -> TaskStatus.NOT_SUBMITTED
-    TaskStatusEntity.SUBMITTED -> TaskStatus.SUBMITTED
-}
+fun LocalParkingBadge.toDomain(): ParkingBadge = ParkingBadge(
+    label = label,
+    value = value,
+    color = color
+)
