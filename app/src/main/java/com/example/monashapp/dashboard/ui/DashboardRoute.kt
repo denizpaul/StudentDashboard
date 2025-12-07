@@ -11,7 +11,6 @@ fun DashboardRoute(viewModel: DashboardViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     DashboardScreen(
-        uiState = uiState,
-        onEvent = viewModel::onEvent
+        uiState = uiState
     )
 }

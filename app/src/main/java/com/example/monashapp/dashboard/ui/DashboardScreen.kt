@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import com.example.monashapp.R
 import com.example.monashapp.core.model.dashboard.DashboardItem
 import com.example.monashapp.core.model.dashboard.HeaderType
-import com.example.monashapp.dashboard.presentation.DashboardUiEvent
 import com.example.monashapp.dashboard.presentation.DashboardUiState
 import com.example.monashapp.dashboard.ui.components.CardTile
 import com.example.monashapp.dashboard.ui.components.DataPoint
@@ -39,8 +38,7 @@ import com.example.monashapp.ui.theme.dashboardColors
 
 @Composable
 fun DashboardScreen(
-    uiState: DashboardUiState,
-    onEvent: (DashboardUiEvent) -> Unit
+    uiState: DashboardUiState
 ) {
     DashboardContent(
         state = uiState,
@@ -145,7 +143,7 @@ private fun SessionItemCell(item: DashboardItem.Session) {
     val color = try {
         val androidColor = android.graphics.Color.parseColor(item.iconColor)
         Color(androidColor)
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         MaterialTheme.dashboardColors.sessionClassIndicator
     }
 
@@ -162,7 +160,7 @@ private fun TaskItemCell(item: DashboardItem.Task) {
     val color = try {
         val androidColor = android.graphics.Color.parseColor(item.iconColor)
         Color(androidColor)
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         MaterialTheme.dashboardColors.taskBadge
     }
 
@@ -183,7 +181,7 @@ private fun ParkingItemCell(item: DashboardItem.Parking) {
         val color = try {
             val androidColor = android.graphics.Color.parseColor(badge.color)
             Color(androidColor)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             MaterialTheme.colorScheme.primary
         }
         DataPoint(
@@ -207,8 +205,7 @@ private fun ParkingItemCell(item: DashboardItem.Parking) {
 private fun DashboardScreenPreview() {
     MonashTheme {
         DashboardScreen(
-            uiState = DashboardUiState(greeting = "Hey, Kier", sections = emptyList()),
-            onEvent = {}
+            uiState = DashboardUiState(greeting = "Hey, Kier", sections = emptyList())
         )
     }
 }
