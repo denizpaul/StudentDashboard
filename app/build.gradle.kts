@@ -1,14 +1,8 @@
-buildscript {
-    dependencies {
-        classpath("com.squareup:javapoet:1.13.0")
-    }
-}
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt.android)
-    id("org.jetbrains.kotlin.kapt")
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {

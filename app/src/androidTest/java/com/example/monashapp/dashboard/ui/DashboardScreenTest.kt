@@ -43,8 +43,7 @@ class DashboardScreenTest {
         composeTestRule.setContent {
             MonashTheme {
                 DashboardScreen(
-                    uiState = viewModel.uiState.value,
-                    onEvent = viewModel::onEvent
+                    uiState = viewModel.uiState.value
                 )
             }
         }
