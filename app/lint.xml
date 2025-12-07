@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Severity Configuration -->
+
+    <!-- Errors - These will fail the build -->
+    <issue id="HardcodedText" severity="error">
+        <ignore path="**/test/**" />
+        <ignore path="**/androidTest/**" />
+    </issue>
+
+    <issue id="MissingTranslation" severity="error" />
+
+    <issue id="UnusedResources" severity="warning" />
+
+    <!-- Compose-specific checks -->
+    <issue id="ComposeViewModelInjection" severity="warning" />
+    <issue id="ComposeModifierMissing" severity="warning" />
+    <issue id="ComposeContentEmitterReturningValues" severity="error" />
+
+    <!-- Performance -->
+    <issue id="DrawAllocation" severity="warning" />
+    <issue id="RecyclerView" severity="warning" />
+    <issue id="Overdraw" severity="warning" />
+
+    <!-- Security -->
+    <issue id="HardcodedDebugMode" severity="error" />
+    <issue id="SetJavaScriptEnabled" severity="warning" />
+    <issue id="ExportedReceiver" severity="warning" />
+    <issue id="ExportedService" severity="warning" />
+
+    <!-- Correctness -->
+    <issue id="MissingPermission" severity="error" />
+    <issue id="InvalidPackage" severity="ignore" />
+
+    <!-- Accessibility -->
+    <issue id="ContentDescription" severity="warning">
+        <ignore path="**/test/**" />
+        <ignore path="**/androidTest/**" />
+    </issue>
+    <issue id="LabelFor" severity="warning" />
+    <issue id="ClickableViewAccessibility" severity="warning" />
+
+    <!-- Kotlin -->
+    <issue id="KotlinPropertyAccess" severity="warning" />
+    <issue id="ObsoleteSdkInt" severity="warning" />
+
+    <!-- Ignore issues in generated code -->
+    <issue id="all">
+        <ignore path="**/build/**" />
+        <ignore path="**/generated/**" />
+    </issue>
+
+    <!-- Ignore specific warnings in test code -->
+    <issue id="SetTextI18n">
+        <ignore path="**/test/**" />
+        <ignore path="**/androidTest/**" />
+    </issue>
+</lint>
+

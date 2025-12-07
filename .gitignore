@@ -13,3 +13,14 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Lint reports
+**/build/reports/lint/
+**/lint-results*.html
+**/lint-results*.xml
+**/lint-results*.sarif
+stdout
+
+# Lint baseline (optional - commit this if you want to track baseline changes)
+# lint-baseline.xml
+

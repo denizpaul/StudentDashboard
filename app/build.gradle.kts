@@ -52,6 +52,45 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    lint {
+        // Fail build on lint errors (disabled initially to see all issues)
+        abortOnError = false
+
+        // Don't fail on warnings
+        warningsAsErrors = false
+
+        // Generate reports
+        checkReleaseBuilds = true
+
+        // HTML report
+        htmlReport = true
+        htmlOutput = file("${project.buildDir}/reports/lint/lint-report.html")
+
+        // XML report
+        xmlReport = true
+        xmlOutput = file("${project.buildDir}/reports/lint/lint-report.xml")
+
+        // SARIF report (for GitHub integration)
+        sarifReport = true
+        sarifOutput = file("${project.buildDir}/reports/lint/lint-report.sarif")
+
+        // Text output to console
+        textReport = true
+        textOutput = file("stdout")
+
+        // Enable all checks by default
+        checkAllWarnings = true
+
+        // Disable specific checks that might be too strict for development
+        disable += setOf(
+            "ObsoleteLintCustomCheck",
+            "GradleDependency"
+        )
+
+        // Baseline file to suppress existing issues
+        baseline = file("lint-baseline.xml")
+    }
 }
 
 configurations.all {
