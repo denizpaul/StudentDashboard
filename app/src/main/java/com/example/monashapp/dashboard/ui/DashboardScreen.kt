@@ -90,13 +90,6 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
                             ) {
                                 CardTile(title = section.header)
 
-                                Spacer(
-                                    modifier = Modifier
-                                        .height(DashboardSpacing.dividerThickness)
-                                        .fillMaxWidth()
-                                        .background(dashboardColors.divider)
-                                )
-
                                 section.items.forEachIndexed { index, item ->
                                     when (item) {
                                         is DashboardItem.Session -> {
