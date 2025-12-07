@@ -11,32 +11,33 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import com.example.monashapp.R
-import com.example.monashapp.dashboard.presentation.DashboardUiState
-import com.example.monashapp.dashboard.presentation.DashboardUiEvent
-import com.example.monashapp.dashboard.ui.components.DashboardToolbar
-import com.example.monashapp.dashboard.ui.components.ParkingAvailabilityList
-import com.example.monashapp.dashboard.ui.components.TodaySessionCard
-import com.example.monashapp.dashboard.ui.components.UpcomingTasksCard
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.dp
+import com.example.monashapp.R
 import com.example.monashapp.core.model.dashboard.ParkingAvailability
 import com.example.monashapp.core.model.dashboard.SessionCategory
 import com.example.monashapp.core.model.dashboard.TaskStatus
 import com.example.monashapp.core.model.dashboard.TodaySession
 import com.example.monashapp.core.model.dashboard.UpcomingTask
+import com.example.monashapp.dashboard.presentation.DashboardUiEvent
+import com.example.monashapp.dashboard.presentation.DashboardUiState
+import com.example.monashapp.dashboard.ui.components.CardTile
+import com.example.monashapp.dashboard.ui.components.ParkingAvailabilityList
+import com.example.monashapp.dashboard.ui.components.SectionTitle
+import com.example.monashapp.dashboard.ui.components.TodaySessionCard
+import com.example.monashapp.dashboard.ui.components.UpcomingTasksCard
 import com.example.monashapp.ui.theme.MonashTheme
 import com.example.monashapp.ui.theme.dashboardColors
 
@@ -45,14 +46,11 @@ fun DashboardScreen(
     uiState: DashboardUiState,
     onEvent: (DashboardUiEvent) -> Unit
 ) {
-    Scaffold(
-        topBar = { DashboardToolbar(title = uiState.greeting) }
-    ) { innerPadding ->
-        DashboardContent(
-            state = uiState,
-            modifier = Modifier.padding(innerPadding)
-        )
-    }
+    // No Scaffold needed - Figma design shows greeting as part of content, not in a toolbar
+    DashboardContent(
+        state = uiState,
+        modifier = Modifier.fillMaxSize()
+    )
 }
 
 @Composable
@@ -62,24 +60,36 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = DashboardSpacing.screenHorizontal, vertical = DashboardSpacing.screenVertical),
-        verticalArrangement = Arrangement.spacedBy(DashboardSpacing.sectionSpacing),
-        contentPadding = PaddingValues(bottom = DashboardSpacing.sectionSpacing)
+            .padding(horizontal = DashboardSpacing.screenHorizontal), // Figma: 24dp horizontal
+        verticalArrangement = Arrangement.spacedBy(DashboardSpacing.cardSpacing), // Figma: 16dp between cards
+        contentPadding = PaddingValues(
+            top = DashboardSpacing.screenTop, // Figma: 48dp from top
+            bottom = DashboardSpacing.screenBottom // Figma: 40dp from bottom
+        )
     ) {
+        // Greeting - Figma: Bold 28sp, -0.7 tracking, 42px line height (LEFT-ALIGNED)
         item {
             Text(
-                text = state.dateLabel,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                text = state.greeting, // "Hey, Kier" - shown in content, not toolbar
+                style = MaterialTheme.typography.headlineMedium, // Bold 28sp, 42px line, -0.7 tracking
+                color = MaterialTheme.colorScheme.onBackground, // Figma: #1D1B20
+                textAlign = TextAlign.Start // LEFT-ALIGNED per Figma design
             )
+        }
+        // Today's sessions section - using CardTile for header
+        item {
+            CardTile(title = state.dateLabel) // e.g., "Today, 10 March"
         }
         item {
             Card(
-                shape = MaterialTheme.shapes.extraLarge,
+                shape = RoundedCornerShape(DashboardSpacing.cardCorner), // Figma: 28dp radius
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
             ) {
-                Column(modifier = Modifier.padding(DashboardSpacing.cardPadding), verticalArrangement = Arrangement.spacedBy(DashboardSpacing.itemSpacing)) {
+                Column(
+                    modifier = Modifier.padding(DashboardSpacing.cardPadding), // Figma: 20dp
+                    verticalArrangement = Arrangement.spacedBy(DashboardSpacing.itemSpacing) // Figma: 24dp
+                ) {
                     state.todaySessions.forEachIndexed { index, session ->
                         TodaySessionCard(session)
                         if (index != state.todaySessions.lastIndex) {
@@ -87,7 +97,7 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
                                 modifier = Modifier
                                     .height(DashboardSpacing.dividerThickness)
                                     .fillMaxWidth()
-                                    .background(dashboardColors.divider)
+                                    .background(dashboardColors.divider) // Exact Figma color with transparency
                             )
                         }
                     }
@@ -96,29 +106,29 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
         }
         item {
             Card(
-                shape = MaterialTheme.shapes.extraLarge,
+                shape = RoundedCornerShape(DashboardSpacing.cardCorner), // Figma: 28dp radius
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
             ) {
-                Column(modifier = Modifier.padding(DashboardSpacing.cardPadding)) {
+                Column(modifier = Modifier.padding(DashboardSpacing.cardPadding)) { // Figma: 20dp
                     UpcomingTasksCard(label = state.upcomingLabel, tasks = state.upcomingTasks)
                 }
             }
         }
+        // Parking section - using SectionTitle with divider
         item {
-            Text(
-                text = stringResource(id = R.string.dashboard_parking_label),
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            SectionTitle(
+                title = stringResource(id = R.string.dashboard_parking_label),
+                showDivider = true
             )
         }
         item {
             Card(
-                shape = MaterialTheme.shapes.extraLarge,
+                shape = RoundedCornerShape(DashboardSpacing.cardCorner), // Figma: 28dp radius
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
             ) {
-                Column(modifier = Modifier.padding(DashboardSpacing.cardPadding)) {
+                Column(modifier = Modifier.padding(DashboardSpacing.cardPadding)) { // Figma: 20dp
                     ParkingAvailabilityList(parkingAvailability = state.parkingAvailability)
                 }
             }
