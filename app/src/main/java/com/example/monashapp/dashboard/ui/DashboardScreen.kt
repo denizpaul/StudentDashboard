@@ -24,7 +24,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.monashapp.R
 import com.example.monashapp.core.model.dashboard.DashboardItem
+import com.example.monashapp.core.model.dashboard.DashboardSection
 import com.example.monashapp.core.model.dashboard.HeaderType
+import com.example.monashapp.core.model.dashboard.ParkingBadge
+import com.example.monashapp.core.model.dashboard.TaskStatus
 import com.example.monashapp.dashboard.presentation.DashboardUiState
 import com.example.monashapp.dashboard.ui.components.CardTile
 import com.example.monashapp.dashboard.ui.components.DataPoint
@@ -35,6 +38,9 @@ import com.example.monashapp.dashboard.ui.components.SectionTitle
 import com.example.monashapp.dashboard.ui.components.SmallCell
 import com.example.monashapp.ui.theme.MonashTheme
 import com.example.monashapp.ui.theme.dashboardColors
+import com.example.monashapp.ui.preview.PreviewFontScales
+import com.example.monashapp.ui.preview.PreviewLandscape
+import com.example.monashapp.ui.preview.PreviewLightDark
 
 @Composable
 fun DashboardScreen(
@@ -197,15 +203,99 @@ private fun ParkingItemCell(item: DashboardItem.Parking) {
     )
 }
 
+private val previewDashboardState = DashboardUiState(
+    greeting = "Hey, Kier",
+    sections = listOf(
+        DashboardSection(
+            header = "Today • Tue, 10 March",
+            headerType = HeaderType.DATE,
+            date = "Tue, 10 March",
+            items = listOf(
+                DashboardItem.Session(
+                    id = "session-1",
+                    iconColor = "#6750A4",
+                    startTime = "09:00",
+                    endTime = "10:30",
+                    startDateTime = "2024-03-10T09:00:00",
+                    endDateTime = "2024-03-10T10:30:00",
+                    title = "FIT2099: Studio Workshop",
+                    subtitle = "Building inclusive data-driven apps"
+                ),
+                DashboardItem.Session(
+                    id = "session-2",
+                    iconColor = "#386A20",
+                    startTime = "11:00",
+                    endTime = "12:00",
+                    startDateTime = "2024-03-10T11:00:00",
+                    endDateTime = "2024-03-10T12:00:00",
+                    title = "LAW1010: Guest lecture",
+                    subtitle = "Legal frameworks for AI"
+                ),
+                DashboardItem.Task(
+                    id = "task-1",
+                    iconColor = "#FFB300",
+                    time = "17:00",
+                    dateTime = "2024-03-10T17:00:00",
+                    title = "MTK1000: Weekly quizzes",
+                    subtitle = "Due today",
+                    status = TaskStatus.PENDING
+                )
+            )
+        ),
+        DashboardSection(
+            header = "Parking availability",
+            headerType = HeaderType.SECTION,
+            items = listOf(
+                DashboardItem.Parking(
+                    id = "parking-1",
+                    title = "Clayton • North multi-level",
+                    badges = listOf(
+                        ParkingBadge(label = "Blue", value = 24, color = "#2962FF"),
+                        ParkingBadge(label = "Red", value = 12, color = "#D32F2F")
+                    ),
+                    lastUpdated = "Updated 2 mins ago"
+                )
+            )
+        )
+    )
+)
+
+private val previewEmptyDashboardState = DashboardUiState(
+    greeting = "Hey, Kier",
+    sections = emptyList()
+)
+
+@PreviewLightDark
+@Composable
+private fun DashboardScreenPopulatedPreview() {
+    MonashTheme {
+        DashboardScreen(uiState = previewDashboardState)
+    }
+}
+
+@PreviewFontScales
+@Composable
+private fun DashboardScreenAccessibilityPreview() {
+    MonashTheme {
+        DashboardScreen(uiState = previewDashboardState)
+    }
+}
+
+@PreviewLandscape
+@Composable
+private fun DashboardScreenLandscapePreview() {
+    MonashTheme {
+        DashboardScreen(uiState = previewDashboardState)
+    }
+}
+
 @Preview(
-    name = "Dashboard - Light",
+    name = "Dashboard - Empty",
     showBackground = true
 )
 @Composable
-private fun DashboardScreenPreview() {
+private fun DashboardScreenEmptyPreview() {
     MonashTheme {
-        DashboardScreen(
-            uiState = DashboardUiState(greeting = "Hey, Kier", sections = emptyList())
-        )
+        DashboardScreen(uiState = previewEmptyDashboardState)
     }
 }
