@@ -11,8 +11,9 @@
 ## Overview
 MonashApp is a single-screen Android dashboard built with Kotlin, Jetpack Compose, and MVVM/Clean architecture. The experience is powered entirely by local data and emphasizes design-system compliance and accessibility.
 
-![Dashboard Light](Screenshots/dashboard_light.png)
-![Dashboard Dark](Screenshots/dashboard_dark.png)
+|Dashboard Light| Dashboard Dark|
+|---------------|----------------|
+|![Dashboard Light](Screenshots/dashboard_light.png)|![Dashboard Dark](Screenshots/dashboard_dark.png)|
 
 ## Architecture
 - **Presentation (app/src/main/java/com/example/monashapp/dashboard/presentation/)**: `DashboardViewModel` exposes immutable `DashboardUiState` via `StateFlow`, reacts to `DashboardUiEvent`, and orchestrates UI updates.
@@ -41,22 +42,21 @@ MonashApp is a single-screen Android dashboard built with Kotlin, Jetpack Compos
 
 ## Figma Dev Mode MCP Workflow
 Design fidelity relies on the repository’s `.github/copilot-instructions.md` and `docs/copilot-*.md` guidelines:
-1. Developers export tokens/components from Figma Dev Mode via MCP and commit under `design/`.
+1. Developers export tokens/components from Figma Dev Mode via MCP.
 2. Compose code maps tokens to Android resources (`colors.xml`, `dimens.xml`, typography styles).
 3. README references: `docs/copilot-figma-devmode.md`, `docs/copilot-design-system.md` for detailed workflow.
-4. Components such as `DashboardToolbar`, `TodaySessionCard`, and `UpcomingTasksCard` were derived from Figma specs, ensuring spacing (`@dimen/spacing_*`), typography, and color tokens match the design system.
+4. Components were derived from Figma specs, ensuring spacing (`@dimen/spacing_*`), typography, and color tokens match the design system.
 
 ## Reusable Components
 Located in `app/src/main/java/com/example/monashapp/dashboard/ui/components/`:
 - `DashboardToolbar`: themed top app bar with avatar + actions.
 - `SectionTitle`: standard header with divider support.
 - `EventCell`: versatile list item supporting sessions and tasks via `EventIcon` + `EventTime` models.
-- `CardTile`, `SmallCell`, `DashboardMetricCard` (if present): used for cards and metric displays.
+- `CardTile`, `SmallCell`: used for cards and metric displays.
 - Composables accept data models (`DashboardItem.Session`, `DashboardItem.Task`, `DashboardItem.Parking`) to ensure testability and reuse.
 
 ## Compose Previews & Sticker Sheets
 - `DashboardScreenPopulatedPreview`, `DashboardScreenAccessibilityPreview`, `DashboardScreenLandscapePreview`, `DashboardScreenEmptyPreview` provide multi-device previews using custom annotations (`PreviewLightDark`, `PreviewFontScales`, `PreviewLandscape`).
-- `ComponentStickerSheet` (if present) demonstrates smaller components for QA and design review.
 - `Screenshots/` folder captures generated previews for README visuals.
 
 ## Testing & Automation
@@ -65,7 +65,7 @@ Located in `app/src/main/java/com/example/monashapp/dashboard/ui/components/`:
   - Mappers/tests ensure data conversions remain deterministic.
 - **UI Tests** (`app/src/androidTest/...`):
   - `DashboardScreenTest` uses a Robot DSL (`DashboardRobot`) built on Compose testing APIs (assertions, scroll helpers) to verify sections, tasks, and accessibility text.
-- **Screenshot Tests**: `android.experimental.enableScreenshotTest=true` with tasks such as `updateDebugScreenshotTest`, `previewScreenshot` (requires validation API dependency).
+- **Screenshot Tests**: TODO
 - **Automation**:
   - `./gradlew assembleDebug`, `./gradlew testDebugUnitTest`, `./gradlew lintDebug`, `./gradlew assembleDebugAndroidTest` are used to validate builds, tests, lint, and instrumentation.
   - Lint baseline prevents regressions while highlighting new warnings (e.g., dependency updates).
