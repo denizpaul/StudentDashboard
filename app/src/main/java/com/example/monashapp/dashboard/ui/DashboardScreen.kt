@@ -18,6 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -71,7 +73,8 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
                 text = state.greeting,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
                 color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Start,
+                modifier = Modifier.semantics { heading() } // Mark greeting as main heading
             )
         }
 
@@ -157,7 +160,8 @@ private fun SessionItemCell(item: DashboardItem.Session) {
         icon = EventIcon.DurationLine(color),
         time = EventTime.Range(item.startTime, item.endTime),
         title = item.title,
-        subtitle = item.subtitle
+        subtitle = item.subtitle,
+        iconDescription = "Class session" // Accessibility description
     )
 }
 
@@ -177,7 +181,8 @@ private fun TaskItemCell(item: DashboardItem.Task) {
         ),
         time = EventTime.Single(item.time),
         title = item.title,
-        subtitle = item.subtitle
+        subtitle = item.subtitle,
+        iconDescription = "Task" // Accessibility description
     )
 }
 

@@ -22,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.monashapp.R
@@ -55,6 +57,7 @@ sealed class EventTime {
  * @param title Event title
  * @param subtitle Optional subtitle/location/status
  * @param subtitleColor Color for subtitle text (e.g., status-based)
+ * @param iconDescription Accessibility description for the icon type (e.g., "Class session", "Task")
  * @param modifier Modifier to be applied to the component
  */
 @Composable
@@ -64,10 +67,31 @@ fun EventCell(
     title: String,
     subtitle: String? = null,
     subtitleColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    iconDescription: String? = null,
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .semantics(mergeDescendants = true) {
+                // Merge all child semantics into one announcement for screen readers
+                contentDescription = buildString {
+                    // Include icon meaning if provided
+                    iconDescription?.let { append("$it, ") }
+
+                    // Include time information
+                    when (time) {
+                        is EventTime.Single -> append("${time.time}, ")
+                        is EventTime.Range -> append("${time.startTime} to ${time.endTime}, ")
+                    }
+
+                    // Include title
+                    append(title)
+
+                    // Include subtitle/location if present
+                    subtitle?.let { append(", $it") }
+                }
+            },
         verticalAlignment = Alignment.Top
     ) {
         // Icon section - fixed width for consistent alignment
@@ -100,7 +124,7 @@ fun EventCell(
                         icon.iconRes?.let { iconRes ->
                             Icon(
                                 painter = painterResource(id = iconRes),
-                                contentDescription = null,
+                                contentDescription = null, // Parent Row handles description via semantics
                                 modifier = Modifier.size(12.dp),
                                 tint = Color.White
                             )

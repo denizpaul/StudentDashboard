@@ -12,6 +12,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -53,10 +55,12 @@ fun SectionTitle(
             text = title,
             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold), // Bold 14sp, 20px line
             color = MaterialTheme.colorScheme.onSurfaceVariant, // Figma: #49454F
-            modifier = Modifier.padding(
-                start = DashboardSpacing.smallSpacing, // 8dp left padding per Figma
-                top = if (showDivider) 0.dp else DashboardSpacing.indicatorGap // 16dp top if no divider
-            )
+            modifier = Modifier
+                .padding(
+                    start = DashboardSpacing.smallSpacing, // 8dp left padding per Figma
+                    top = if (showDivider) 0.dp else DashboardSpacing.indicatorGap // 16dp top if no divider
+                )
+                .semantics { heading() } // Mark as heading for screen reader navigation
         )
     }
 }
