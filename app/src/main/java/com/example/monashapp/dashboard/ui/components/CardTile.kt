@@ -7,6 +7,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -30,7 +32,9 @@ fun CardTile(
         text = title,
         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f), // 90% opacity per Figma
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .semantics { heading() } // Mark as heading for screen reader navigation
     )
 }
 

@@ -14,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,7 +55,28 @@ fun SmallCell(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = DashboardSpacing.smallSpacing), // 8dp vertical padding
+            .padding(vertical = DashboardSpacing.smallSpacing)
+            .semantics(mergeDescendants = true) {
+                // Merge all children into one announcement for screen readers
+                contentDescription = buildString {
+                    append(title)
+                    if (dataPoints.isNotEmpty()) {
+                        append(", ")
+                        dataPoints.forEachIndexed { index, dataPoint ->
+                            // Expand single-letter labels to full words for clarity
+                            val colorName = when (dataPoint.label) {
+                                "B" -> "Blue"
+                                "R" -> "Red"
+                                "G" -> "Green"
+                                else -> dataPoint.label
+                            }
+                            append("$colorName ${dataPoint.value}")
+                            if (index < dataPoints.lastIndex) append(", ")
+                        }
+                        append(" spots available")
+                    }
+                }
+            },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -61,11 +84,15 @@ fun SmallCell(
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium, // Medium 16sp, 24px line
-            color = MaterialTheme.colorScheme.onSurface // Figma: #1D1B20
+            color = MaterialTheme.colorScheme.onSurface, // Figma: #1D1B20
+            modifier = Modifier.weight(1f, fill = false) // Allow text to wrap on large fonts
         )
 
         // Data points on right
-        Row(horizontalArrangement = Arrangement.spacedBy(DashboardSpacing.indicatorGap)) { // 16dp gap between badges
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(DashboardSpacing.indicatorGap),
+            modifier = Modifier.padding(start = 8.dp) // Add spacing between title and badges
+        ) {
             dataPoints.forEach { dataPoint ->
                 DataPointBadge(dataPoint = dataPoint)
             }
