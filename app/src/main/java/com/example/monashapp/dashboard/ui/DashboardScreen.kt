@@ -10,14 +10,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -68,7 +71,7 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
         ),
         verticalArrangement = Arrangement.spacedBy(DashboardSpacing.cardSpacing)
     ) {
-        item {
+        item(key = "greeting") {
             Text(
                 text = state.greeting,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
@@ -78,65 +81,62 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
             )
         }
 
-        state.sections.forEach { section ->
+        items(
+            items = state.sections,
+            key = { section -> section.header }
+        ) { section ->
             when (section.headerType) {
                 HeaderType.DATE -> {
-                    item {
-                        Card(
-                            shape = RoundedCornerShape(DashboardSpacing.cardCorner),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                    Card(
+                        shape = RoundedCornerShape(DashboardSpacing.cardCorner),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(DashboardSpacing.cardPadding),
+                            verticalArrangement = Arrangement.spacedBy(DashboardSpacing.itemSpacing)
                         ) {
-                            Column(
-                                modifier = Modifier.padding(DashboardSpacing.cardPadding),
-                                verticalArrangement = Arrangement.spacedBy(DashboardSpacing.itemSpacing)
-                            ) {
-                                CardTile(title = section.header)
+                            CardTile(title = section.header)
 
-                                section.items.forEachIndexed { index, item ->
-                                    when (item) {
-                                        is DashboardItem.Session -> {
-                                            SessionItemCell(item = item)
-                                        }
-                                        is DashboardItem.Task -> {
-                                            TaskItemCell(item = item)
-                                        }
-                                        else -> {}
+                            section.items.forEachIndexed { index, item ->
+                                when (item) {
+                                    is DashboardItem.Session -> {
+                                        SessionItemCell(item = item)
                                     }
-                                    if (index != section.items.lastIndex) {
-                                        Spacer(
-                                            modifier = Modifier
-                                                .height(DashboardSpacing.dividerThickness)
-                                                .fillMaxWidth()
-                                                .background(dashboardColors.divider)
-                                        )
+                                    is DashboardItem.Task -> {
+                                        TaskItemCell(item = item)
                                     }
+                                    else -> {}
+                                }
+                                if (index != section.items.lastIndex) {
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(DashboardSpacing.dividerThickness)
+                                            .fillMaxWidth()
+                                            .background(dashboardColors.divider)
+                                    )
                                 }
                             }
                         }
                     }
                 }
                 HeaderType.SECTION -> {
-                    item {
-                        SectionTitle(
-                            title = section.header,
-                            showDivider = true
-                        )
-                    }
-                    item {
-                        Card(
-                            shape = RoundedCornerShape(DashboardSpacing.cardCorner),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-                        ) {
-                            Column(modifier = Modifier.padding(DashboardSpacing.cardPadding)) {
-                                section.items.forEach { item ->
-                                    when (item) {
-                                        is DashboardItem.Parking -> {
-                                            ParkingItemCell(item = item)
-                                        }
-                                        else -> {}
+                    SectionTitle(
+                        title = section.header,
+                        showDivider = true
+                    )
+                    Card(
+                        shape = RoundedCornerShape(DashboardSpacing.cardCorner),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(DashboardSpacing.cardPadding)) {
+                            section.items.forEach { item ->
+                                when (item) {
+                                    is DashboardItem.Parking -> {
+                                        ParkingItemCell(item = item)
                                     }
+                                    else -> {}
                                 }
                             }
                         }
@@ -149,11 +149,20 @@ private fun DashboardContent(state: DashboardUiState, modifier: Modifier = Modif
 
 @Composable
 private fun SessionItemCell(item: DashboardItem.Session) {
-    val color = try {
-        val androidColor = android.graphics.Color.parseColor(item.iconColor)
-        Color(androidColor)
-    } catch (_: Exception) {
-        MaterialTheme.dashboardColors.sessionClassIndicator
+    val isPreview = LocalInspectionMode.current
+    val dashboardColors = MaterialTheme.dashboardColors
+
+    val color = remember(item.iconColor, isPreview) {
+        if (isPreview) {
+            dashboardColors.sessionClassIndicator
+        } else {
+            try {
+                val androidColor = android.graphics.Color.parseColor(item.iconColor)
+                Color(androidColor)
+            } catch (_: Exception) {
+                dashboardColors.sessionClassIndicator
+            }
+        }
     }
 
     EventCell(
@@ -167,11 +176,20 @@ private fun SessionItemCell(item: DashboardItem.Session) {
 
 @Composable
 private fun TaskItemCell(item: DashboardItem.Task) {
-    val color = try {
-        val androidColor = android.graphics.Color.parseColor(item.iconColor)
-        Color(androidColor)
-    } catch (_: Exception) {
-        MaterialTheme.dashboardColors.taskBadge
+    val isPreview = LocalInspectionMode.current
+    val dashboardColors = MaterialTheme.dashboardColors
+
+    val color = remember(item.iconColor, isPreview) {
+        if (isPreview) {
+            dashboardColors.taskBadge
+        } else {
+            try {
+                val androidColor = android.graphics.Color.parseColor(item.iconColor)
+                Color(androidColor)
+            } catch (_: Exception) {
+                dashboardColors.taskBadge
+            }
+        }
     }
 
     EventCell(
@@ -188,18 +206,27 @@ private fun TaskItemCell(item: DashboardItem.Task) {
 
 @Composable
 private fun ParkingItemCell(item: DashboardItem.Parking) {
-    val dataPoints = item.badges.map { badge ->
-        val color = try {
-            val androidColor = android.graphics.Color.parseColor(badge.color)
-            Color(androidColor)
-        } catch (_: Exception) {
-            MaterialTheme.colorScheme.primary
+    val isPreview = LocalInspectionMode.current
+    val primaryColor = MaterialTheme.colorScheme.primary
+
+    val dataPoints = remember(item.badges, isPreview) {
+        item.badges.map { badge ->
+            val color = if (isPreview) {
+                primaryColor
+            } else {
+                try {
+                    val androidColor = android.graphics.Color.parseColor(badge.color)
+                    Color(androidColor)
+                } catch (_: Exception) {
+                    primaryColor
+                }
+            }
+            DataPoint(
+                label = badge.label,
+                value = badge.value,
+                color = color
+            )
         }
-        DataPoint(
-            label = badge.label,
-            value = badge.value,
-            color = color
-        )
     }
 
     SmallCell(

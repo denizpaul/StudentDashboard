@@ -90,8 +90,8 @@ fun SmallCell(
 
         // Data points on right
         Row(
-            horizontalArrangement = Arrangement.spacedBy(DashboardSpacing.indicatorGap),
-            modifier = Modifier.padding(start = 8.dp) // Add spacing between title and badges
+            horizontalArrangement = Arrangement.spacedBy(DashboardSpacing.smallSpacing), // 8dp gap between badge groups
+            verticalAlignment = Alignment.CenterVertically
         ) {
             dataPoints.forEach { dataPoint ->
                 DataPointBadge(dataPoint = dataPoint)
@@ -105,24 +105,30 @@ fun SmallCell(
  */
 @Composable
 private fun DataPointBadge(dataPoint: DataPoint) {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { // 6dp gap per Figma
-        // Circular badge with label
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(12.dp), // Gap between badge and number
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Circular badge with label - Figma: 24dp circle
         Text(
             text = dataPoint.label,
             color = Color.White, // White text on colored background
             style = MaterialTheme.typography.labelSmall.copy(
                 fontWeight = FontWeight.Bold,
-                fontSize = 10.sp // Figma: Bold 10sp
+                fontSize = 12.sp
             ),
             modifier = Modifier
                 .background(dataPoint.color, CircleShape)
-                .padding(6.dp) // Padding to make it 24dp total size
+                .padding(
+                    horizontal = 8.dp, // Left/right padding for centering
+                    vertical = 4.dp // Top/bottom padding to achieve 24dp height
+                )
         )
 
         // Value
         Text(
             text = dataPoint.value.toString(),
-            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold), // Bold 14sp, 20px line
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold), // SemiBold 16sp, 24px line height
             color = MaterialTheme.colorScheme.onSurface // Figma: #1D1B20
         )
     }
